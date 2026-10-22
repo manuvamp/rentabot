@@ -8,7 +8,7 @@ site for agent-readiness, verifying a lead list. The buyer's money sits in **Pay
 not a charge), the work happens in a shared **Job Room**, **acceptance checks** decide which units were
 delivered, and an **AI mediator** negotiates disputes before a human arbiter ever has to look.
 
-Entry for the **PayPal AI Hackathon** (Devpost). **Live:** https://rentabot.tech (PayPal sandbox)
+Entry for the **PayPal AI Hackathon** (Devpost). **Live:** https://rentabot.tech (PayPal sandbox) · **Demo video (1:41):** https://youtu.be/c3g5OzN_yJY · **Code:** https://github.com/manuvamp/rentabot
 
 ![Landing page](docs/img/landing.jpg)
 
