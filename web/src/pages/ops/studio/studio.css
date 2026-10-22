@@ -1,0 +1,226 @@
+/* The P&L studio has two looks, both from the site's own colours: "ink" (the console) and "paper" (a printed receipt).
+   Everything in the AG Studio theme (theme.ts) and in the custom widgets points at these variables, so switching
+   data-ag-theme-mode re-skins Studio, its grids and charts, and the widgets in one go. */
+/* The one place the studio's colours are mapped from the site palette (charcoal, sand, yellow highlight, pink, lavender,
+   mint pass, coral fail). Fonts follow the site's own font variables. */
+.rab-studio {
+  --st-font: var(--font-sans, 'Outfit Variable', ui-sans-serif, system-ui, sans-serif);
+  --st-display: var(--font-display, 'Outfit Variable', ui-sans-serif, system-ui, sans-serif);
+  --st-mono: var(--font-mono, ui-monospace, 'Cascadia Mono', Consolas, monospace);
+}
+.rab-studio[data-ag-theme-mode='ink'] {
+  --st-canvas: #1a1a1c;
+  --st-surface: #232325;
+  --st-surface-2: #2a2a2d;
+  --st-surface-3: #343437;
+  --st-line: #3a3a3d;
+  --st-line-soft: #2e2e31;
+  --st-text: #f2f0ea;
+  --st-soft: #d6d3cb;
+  --st-mute: #b9b6ae;
+  --st-accent: #ffd84d;
+  --st-on-accent: #1a1a1c;
+  --st-good: #8be3b4;
+  --st-warn: #ffd84d;
+  --st-bad: #ff6b5b;
+  --st-c1: #ffd84d;
+  --st-c2: #ff9bb3;
+  --st-c3: #ff6b5b;
+  --st-c4: #8be3b4;
+  --st-c5: #8e8b84;
+  --st-c6: #e9dfcb;
+  --st-c7: #c9b8ff;
+  --st-c8: #d9728f;
+  --st-c9: #b9b6ae;
+  --st-c10: #6b5a85;
+}
+.rab-studio[data-ag-theme-mode='paper'] {
+  --st-canvas: #e9dfcb;
+  --st-surface: #f6f0e2;
+  --st-surface-2: #efe7d4;
+  --st-surface-3: #ddd2b9;
+  --st-line: rgba(26, 26, 28, 0.28);
+  --st-line-soft: rgba(26, 26, 28, 0.14);
+  --st-text: #1a1a1c;
+  --st-soft: #3a3a3d;
+  --st-mute: #6a665c;
+  --st-accent: #b88a00;
+  --st-on-accent: #1a1a1c;
+  --st-good: #2e8f5e;
+  --st-warn: #a06a00;
+  --st-bad: #c93c2c;
+  --st-c1: #d9a800;
+  --st-c2: #d9728f;
+  --st-c3: #c93c2c;
+  --st-c4: #2e8f5e;
+  --st-c5: #6a665c;
+  --st-c6: #8a6d3b;
+  --st-c7: #7b63b8;
+  --st-c8: #e0675c;
+  --st-c9: #8f8671;
+  --st-c10: #2b2238;
+}
+
+.rab-studio {
+  background: var(--st-canvas);
+  color: var(--st-text);
+  font-family: var(--st-font);
+  transition: background-color 0.25s;
+}
+
+/* ---- custom widget chrome (shared by the waterfall and the fee-variance widgets) ---- */
+.rab-w {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 2px 4px 0;
+  color: var(--st-text);
+  font-family: var(--st-font);
+}
+.rab-w-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rab-w-title {
+  font-family: var(--st-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--st-text);
+}
+.rab-w-sub {
+  font-family: var(--st-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--st-mute);
+}
+.rab-w-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.rab-w-body svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.rab-w-note {
+  font-family: var(--st-mono);
+  font-size: 10.5px;
+  color: var(--st-mute);
+}
+.rab-wf-step {
+  cursor: pointer;
+  outline: none;
+}
+.rab-wf-step:focus-visible rect.rab-wf-hit {
+  stroke: var(--st-accent);
+  stroke-width: 2;
+}
+.rab-wf-step .rab-wf-bar {
+  transition: opacity 0.2s, transform 0.2s;
+  transform-box: fill-box;
+  transform-origin: bottom;
+}
+@keyframes rab-rise {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+.rab-wf-bar {
+  animation: rab-rise 0.55s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+.rab-wf-step:hover .rab-wf-bar {
+  opacity: 0.88;
+}
+.rab-wf-label {
+  font-family: var(--st-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  fill: var(--st-soft);
+}
+.rab-wf-value {
+  font-family: var(--st-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  fill: var(--st-text);
+}
+.rab-wf-ghost {
+  fill: none;
+  stroke: var(--st-mute);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+}
+.rab-w-stamp {
+  position: absolute;
+  right: 6px;
+  top: 28px;
+  transform: rotate(6deg);
+  font-family: var(--st-mono);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--st-accent);
+  border: 2px solid var(--st-accent);
+  border-radius: 6px;
+  padding: 2px 7px;
+  opacity: 0.9;
+  pointer-events: none;
+}
+.rab-fv-row {
+  cursor: pointer;
+}
+.rab-fv-row:hover .rab-fv-line {
+  stroke-width: 4;
+}
+.rab-evidence {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--st-mono);
+  font-size: 11.5px;
+  color: var(--st-text);
+}
+.rab-evidence th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--st-mute);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--st-line);
+}
+.rab-evidence td {
+  padding: 5px 6px;
+  border-bottom: 1px dashed var(--st-line-soft);
+  vertical-align: top;
+}
+.rab-evidence td.num,
+.rab-evidence th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.rab-evidence .neg {
+  color: var(--st-bad);
+}
+.rab-evidence .pos {
+  color: var(--st-good);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rab-wf-step .rab-wf-bar {
+    transition: none;
+  }
+}

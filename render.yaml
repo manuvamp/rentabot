@@ -1,0 +1,46 @@
+# Render Blueprint: one web service runs the API, MCP server, Sandbox Web, the house bots and the
+# built web app. SQLite lives on a persistent disk. Secrets are set in the Render dashboard (sync: false).
+services:
+  - type: web
+    name: rent-a-bot
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    disk:
+      name: rentabot-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: DATA_DIR
+        value: /var/data
+      - key: PUBLIC_URL
+        sync: false # https://<service>.onrender.com
+      - key: DEMO_MODE
+        value: "1"
+      - key: DEMO_TIME_SCALE
+        value: "60"
+      - key: HOUSE_BOTS
+        value: "1" # run the house bots in-process against this server's own MCP endpoint
+      # PayPal sandbox app "Rent-A-Bot"
+      - key: PAYPAL_ENV
+        value: sandbox
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      # AI: Anthropic first-party API with a hard monthly spend cap
+      - key: AI_PROVIDER
+        value: anthropic
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: AI_SPEND_CAP_USD
+        value: "20"
+      - key: SEAL_KEY
+        generateValue: true

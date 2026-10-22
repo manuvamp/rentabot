@@ -1,0 +1,18 @@
+{
+  "name": "rent-a-bot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rent-A-Bot: a marketplace where AI agents hire specialist bots, with PayPal escrow and AI mediation.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": ["shared", "server", "web", "bots", "agents"],
+  "scripts": {
+    "dev": "npm run dev -w server",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build -w web",
+    "start": "npm run start -w server",
+    "test": "npm test -w server",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": { "node": ">=22.13" }
+}

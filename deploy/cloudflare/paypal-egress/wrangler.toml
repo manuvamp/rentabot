@@ -1,0 +1,13 @@
+name = "rentabot-paypal-egress"
+main = "worker.ts"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+# Sandbox now; switch to https://api-m.paypal.com only for live payments.
+UPSTREAM = "https://api-m.sandbox.paypal.com"
+
+# Optional custom domain instead of the workers.dev URL (the zone must be on this Cloudflare account):
+# routes = [{ pattern = "paypal-egress.rentabot.tech", custom_domain = true }]
+
+# EGRESS_SECRET is a secret, never put it here:  npx wrangler secret put EGRESS_SECRET

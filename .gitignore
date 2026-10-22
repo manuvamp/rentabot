@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.sqlite
+*.db
+.secrets*
+data/
+server/data/
+web/docs-screens/*.tmp
+scripts/local/
+deploy/gce/config.local.sh

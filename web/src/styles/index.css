@@ -1,0 +1,571 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ tokens */
+@theme {
+  --font-display: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-hand: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* soft charcoal surfaces (not pure black) */
+  --color-ink: #1a1a1c;
+  --color-ink-1: #232325;
+  --color-ink-2: #2a2a2d;
+  --color-ink-3: #353538;
+  --color-line: #3a3a3d;
+  --color-mute: #8f8c85;
+  --color-soft: #b9b6ae;
+  --color-fog: #f2f0ea;
+
+  /* paper (receipts, tags, contracts). "pink" is the PEN colour: dark ink printed on paper. */
+  --color-paper: #f4eee1;
+  --color-paper-2: #e9dfcb;
+  --color-paper-3: #d8ccb2;
+  --color-pink: #1a1814;
+  --color-pmute: #6a6455;
+
+  /* brand: highlighter / sticky-note yellow (echoes PayPal's checkout gold) */
+  --color-hl: #ffd84d;
+  --color-hl-deep: #8a6400;
+
+  /* sticky-note palette */
+  --color-rose: #ff9bb3;
+  --color-lav: #c9b8ff;
+  --color-plum: #2b2238;
+  --color-sand: #e9dfcb;
+
+  /* semantics: mint = pass / verified / captured, coral = fail / void, lavender = pending / held */
+  --color-mint: #8be3b4;
+  --color-mint-deep: #1f7a4d;
+  --color-coral: #ff6b5b;
+  --color-coral-deep: #c4281c;
+  /* legacy names kept so every page (and other agents' pages) inherits the new look: lime = mint, amber = lavender */
+  --color-lime: #8be3b4;
+  --color-lime-deep: #1f7a4d;
+  --color-amber: #c9b8ff;
+  --color-amber-deep: #5a3fc0;
+
+  --radius-tag: 14px;
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+/* -------------------------------------------------------------------- base */
+@layer base {
+  html {
+    background: var(--color-ink);
+    color: var(--color-fog);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+    overflow-x: clip;
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--color-ink);
+    /* faint dot grid on the whole page */
+    background-image: radial-gradient(rgba(242, 240, 234, 0.075) 1.1px, transparent 1.4px);
+    background-size: 22px 22px;
+  }
+  ::selection {
+    background: var(--color-hl);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-hl);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .on-paper :focus-visible,
+  .paper :focus-visible {
+    outline-color: var(--color-pink);
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* grid items may shrink below their content width, so code blocks scroll instead of widening the page */
+  .grid > * {
+    min-width: 0;
+  }
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/* grain over everything (very faint) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ------------------------------------------------------------ type helpers */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  word-spacing: 0.07em;
+  line-height: 0.98;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-mute);
+}
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* ------------------------------------------------------------- paper stuff */
+.paper {
+  background-color: var(--color-paper);
+  color: var(--color-pink);
+  position: relative;
+  /* paper fibre (fine grain + a slow blotch) over a faint top-to-bottom light fall-off */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .3  0 0 0 0 .2  0 0 0 .16 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .25  0 0 0 .18 0'/></filter><rect width='100%' height='100%' filter='url(%23b)'/></svg>"),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 40%);
+}
+
+/* receipt: paper with torn zig-zag top and bottom */
+.receipt-wrap {
+  filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.55)) drop-shadow(0 2px 0 rgba(0, 0, 0, 0.25));
+}
+.receipt {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+.receipt::before,
+.receipt::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 9px;
+  background-repeat: repeat-x;
+  background-size: 16px 9px;
+}
+.receipt::before {
+  top: -8px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='9'><polygon points='0,9 8,0 16,9' fill='%23f4eee1'/></svg>");
+}
+.receipt::after {
+  bottom: -8px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='9'><polygon points='0,0 16,0 8,9' fill='%23f4eee1'/></svg>");
+}
+.receipt-rule {
+  border: 0;
+  border-top: 1.5px dashed rgba(26, 24, 20, 0.45);
+  margin: 0.55rem 0;
+}
+.dots-leader {
+  flex: 1;
+  min-width: 12px;
+  border-bottom: 1.5px dotted rgba(26, 24, 20, 0.4);
+  transform: translateY(-3px);
+}
+.ink .dots-leader {
+  border-bottom-color: rgba(188, 188, 199, 0.35);
+}
+
+/* rubber stamp ink texture */
+.stamp {
+  --stamp-ink: var(--color-coral-deep);
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--stamp-ink);
+  border: 3px solid var(--stamp-ink);
+  border-radius: 7px;
+  padding: 0.3em 0.7em 0.25em;
+  line-height: 1.1;
+  user-select: none;
+  white-space: nowrap;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -14 0 0 0 9.4'/></filter><rect width='160' height='160' filter='url(%23s)'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -14 0 0 0 9.4'/></filter><rect width='160' height='160' filter='url(%23s)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.88;
+}
+.stamp::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid var(--stamp-ink);
+  border-radius: 4px;
+  opacity: 0.55;
+}
+.stamp.on-ink {
+  mix-blend-mode: normal;
+}
+.stamp-lime {
+  --stamp-ink: var(--color-lime-deep);
+}
+.stamp-amber {
+  --stamp-ink: var(--color-amber-deep);
+}
+.stamp-coral {
+  --stamp-ink: var(--color-coral-deep);
+}
+.stamp-ink {
+  --stamp-ink: var(--color-pink);
+}
+.stamp.on-ink.stamp-lime {
+  --stamp-ink: var(--color-lime);
+}
+.stamp.on-ink.stamp-amber {
+  --stamp-ink: var(--color-amber);
+}
+.stamp.on-ink.stamp-coral {
+  --stamp-ink: var(--color-coral);
+}
+.stamp.on-ink.stamp-ink {
+  --stamp-ink: var(--color-fog);
+}
+
+/* rental tag */
+.tag-shape {
+  --hole-y: 26px;
+  position: relative;
+  clip-path: polygon(22px 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%, 0 22px);
+  -webkit-mask-image: radial-gradient(circle 9px at 50% var(--hole-y), transparent 8.5px, #000 9.5px);
+  mask-image: radial-gradient(circle 9px at 50% var(--hole-y), transparent 8.5px, #000 9.5px);
+}
+.tag-perf {
+  position: relative;
+  border-top: 2px dashed rgba(26, 24, 20, 0.35);
+}
+.tag-perf::before,
+.tag-perf::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-ink);
+}
+.tag-perf::before {
+  left: -7px;
+}
+.tag-perf::after {
+  right: -7px;
+}
+
+
+/* ------------------------------------------------- highlighter + sticky notes */
+.hl-block {
+  display: inline;
+  background: var(--color-hl);
+  color: var(--color-ink);
+  padding: 0.02em 0.18em 0.06em;
+  border-radius: 0.16em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  box-shadow: 0 0.06em 0 rgba(0, 0, 0, 0.25);
+  /* tall enough that a wrapped second line's highlight does not paint over the first line's descenders (y, g, p) */
+  line-height: 1.16;
+}
+.note {
+  --note: var(--color-hl);
+  --r: 0deg;
+  position: relative;
+  background-color: var(--note);
+  color: #1a1814;
+  font-family: var(--font-hand);
+  line-height: 1.05;
+  padding: 0.7rem 0.95rem 0.8rem;
+  border-radius: 3px 3px 3px 12px / 3px 3px 3px 6px;
+  transform: rotate(var(--r));
+  transition: transform 0.3s var(--ease-snap);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .25  0 0 0 0 .1  0 0 0 .14 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.06));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 2px 3px rgba(0, 0, 0, 0.25), 0 18px 22px -10px rgba(0, 0, 0, 0.6);
+}
+/* curled corner */
+.note::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.16) 50%, rgba(0, 0, 0, 0.04));
+  border-bottom-right-radius: 3px;
+}
+.note-hover:hover {
+  transform: rotate(calc(var(--r) * -1.6)) translateY(-3px);
+}
+.note-pink {
+  --note: var(--color-rose);
+}
+.note-lav {
+  --note: var(--color-lav);
+}
+.note-sand {
+  --note: var(--color-sand);
+}
+.note-mint {
+  --note: var(--color-mint);
+}
+/* push pin */
+.pin::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9a8d, var(--color-coral) 45%, #b8281c 100%);
+  box-shadow: 0 5px 6px -1px rgba(0, 0, 0, 0.55);
+}
+.hand {
+  font-family: var(--font-hand);
+  line-height: 1;
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(var(--r, 0deg)); }
+  30% { transform: rotate(calc(var(--r, 0deg) + 2.4deg)); }
+  65% { transform: rotate(calc(var(--r, 0deg) - 1.8deg)); }
+}
+.wiggle:hover {
+  animation: wiggle 0.5s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wiggle:hover { animation: none; }
+  .note, .note-hover:hover { transition: none; }
+}
+/* a big rounded colour panel (how-it-works steps etc.) */
+.panel-big {
+  border-radius: 36px;
+  overflow: hidden;
+}
+
+/* cards on ink */
+.panel {
+  background: var(--color-ink-1);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+}
+.panel-2 {
+  background: var(--color-ink-2);
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+}
+
+/* a subtle dotted grid for hero / section backdrops */
+.bg-dots {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+.bg-rule-lines {
+  background-image: repeating-linear-gradient(0deg, transparent 0 31px, rgba(255, 255, 255, 0.04) 31px 32px);
+}
+
+/* scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-3) transparent;
+}
+
+/* ticker */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+}
+.live-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+}
+
+/* range input styled like a bot-rental lever */
+input[type='range'].lever {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 40px;
+  background: transparent;
+  cursor: grab;
+}
+input[type='range'].lever::-webkit-slider-runnable-track {
+  height: 10px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--color-hl) var(--fill, 50%), var(--color-ink-3) var(--fill, 50%));
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+input[type='range'].lever::-moz-range-track {
+  height: 10px;
+  border-radius: 99px;
+  background: var(--color-ink-3);
+}
+input[type='range'].lever::-moz-range-progress {
+  height: 10px;
+  border-radius: 99px;
+  background: var(--color-hl);
+}
+input[type='range'].lever::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -13px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-paper);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0 0 0 2px var(--color-hl), 0 6px 14px rgba(0, 0, 0, 0.5);
+}
+input[type='range'].lever::-moz-range-thumb {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: var(--color-paper);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0 0 0 2px var(--color-hl);
+}
+input[type='range'].lever:active {
+  cursor: grabbing;
+}
+
+/* form controls on ink */
+/* in the components layer so utilities (pl-9, text-sm, font-mono) can override */
+@layer components {
+.field {
+  width: 100%;
+  background: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: 9px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-fog);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field::placeholder {
+  color: #6c6c79;
+}
+.field:hover {
+  border-color: #4a4a55;
+}
+.field:focus-visible {
+  outline: none;
+  border-color: var(--color-hl);
+  box-shadow: 0 0 0 3px rgba(255, 216, 77, 0.2);
+}
+.field-paper {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(26, 24, 20, 0.28);
+  color: var(--color-pink);
+  font-family: var(--font-mono);
+}
+.field-paper:focus-visible {
+  border-color: var(--color-pink);
+  box-shadow: 0 0 0 3px rgba(26, 24, 20, 0.12);
+}
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' fill='none' stroke='%238c8c99' stroke-width='1.6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2rem;
+}
+}
+
+/* sr-only helper kept explicit for older tooling */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* landing: ring of text around the dotted sphere */
+@keyframes ring-spin {
+  from {
+    transform: rotate(-120deg);
+  }
+  to {
+    transform: rotate(240deg);
+  }
+}
+.ring-spin {
+  transform-box: view-box;
+  transform-origin: 300px 300px;
+  transform: rotate(-120deg);
+  animation: ring-spin 120s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ring-spin {
+    animation: none;
+  }
+  /* a stopped marquee would hide its tail: let it scroll by hand instead */
+  .marquee-x {
+    overflow-x: auto;
+  }
+}

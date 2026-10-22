@@ -1,0 +1,7 @@
+name = "rentabot-web-egress"
+main = "worker.ts"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+# EGRESS_SECRET is a secret, never put it here. deploy.sh generates it (.secrets/web-egress.json) and runs
+#   npx wrangler secret put EGRESS_SECRET
